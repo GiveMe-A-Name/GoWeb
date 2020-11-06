@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>register</title>
+  <script>
+    onload = function(){
+      document.querySelector("input#username").onchange = function (e){
+        let value = e.target.value
+        if (value==""){
+          document.querySelector("#msg").innerHTML ="请填入注册账号"
+        } else {
+          let xhr = new XMLHttpRequest()
+          xhr.open("POST","/checkRegister")
+          xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+          xhr.onload = function(event){
+            document.querySelector("#msg").innerHTML = xhr.responseText
+          }
+          xhr.send("username="+value)
+        }
+      }
+      function GetRequest(){
+          let msg = location.search
+          
+          let theRequest = {}
+          if(msg.indexOf('?')!=-1){
+            let str = msg.substring(1)
+            let strs = str.split("&")
+            for(let i =0;i<strs.length;i++){
+              theRequest[strs[i].split("=")[0]] = decodeURIComponent(strs[i].split("=")[1])
+            }
+          }
+          return theRequest
+        }
+      let msg = GetRequest().msg
+      if(msg!==undefined){
+          document.querySelector("p#msg").innerHTML = msg
+      }
+    }
+  </script>
+</head>
+<body>
+  <form action="/register" method="POST">
+    <label for="username">注册账号：</label>
+    <input type="text" name="username" id="username"> <span id="msg"></span>
+    <br>
+    <label for="password">密码</label>
+    <input type="password" name="password" id="password">
+    <input type="submit" value="提交">
+    <p id="msg"></p>
+  </form>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script>
+      onload = function(){
+        let input_user = document.querySelector("input#username")
+        input_user.onchange = function(e){
+          if(e.target.value==""){
+            document.querySelector("span.msg_username").innerHTML = "请填写账号"
+          } else {
+            let xhr = new XMLHttpRequest()
+            xhr.open("POST",'/check')
+            xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+            xhr.onload = function(e){
+              document.querySelector("span.msg_username").innerHTML = xhr.responseText 
+            }
+            xhr.send('username='+e.target.value)
+          }
+        }
+        function GetRequest(){
+          let msg = location.search
+          
+          let theRequest = {}
+          if(msg.indexOf('?')!=-1){
+            let str = msg.substring(1)
+            let strs = str.split("&")
+            for(let i =0;i<strs.length;i++){
+              theRequest[strs[i].split("=")[0]] = decodeURIComponent(strs[i].split("=")[1])
+            }
+          }
+          return theRequest
+        }
+        let msg = GetRequest().msg
+        if(msg!==undefined){
+          document.querySelector("p#msg").innerHTML = msg
+        }
+      }
+  </script>
+</head>
+<body>
+  <form action="/login" method="POST">
+    账号：<input type="text" name="username" id="username"><span class="msg_username"></span><br>
+    
+    密码：<input type="password" name="password" id=""> <br>
+    <input type="submit" value="OK"> <a href="/register">注册</a>
+    <p id="">{{.}}</p>
+    <p id="msg"></p>
+  </form>
+</body>
+</html>
